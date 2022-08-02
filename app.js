@@ -10,6 +10,7 @@ const dbConnect = require('./db/dbConnect');
 
 //routers
 const authRoutes = require('./routes/authRoute');
+const productRoutes = require('./routes/productRoute');
 
 //error handlers
 const notFoundMiddleware = require('./middleware/not-found');
@@ -20,6 +21,7 @@ app.get("/hello", (req, res) => {
     res.status(200).send("<p>Hello you hit me</p>")
 });
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/products', productRoutes);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
