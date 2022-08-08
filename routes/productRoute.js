@@ -7,6 +7,7 @@ const authenticateUser = require('../middleware/authentication');
 router
     .route('/')
     .post(authenticateUser, productController.createProduct)
+    .get(authenticateUser, productController.getAllProducts)
 
 
 module.exports = router;

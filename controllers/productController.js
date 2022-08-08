@@ -3,7 +3,7 @@ const { createdResponse, successResponse } = require('../responses/apiResponses'
 const CustomError = require('../errors');
 
 exports.createProduct = async(req, res) => {
-    
+
     req.body.user = req.user.userId;
     const product = await Product.findOne({name: req.body.name});
     if(product){
@@ -11,4 +11,9 @@ exports.createProduct = async(req, res) => {
     }
     const newProduct = await Product.create(req.body);
     createdResponse(res, 'Product created successfully', newProduct);
+}
+
+exports.getAllProducts = async(req, res) => {
+    const products = await Product.find();
+    successResponse(res, 'Products retrieved successfully', products);
 }
