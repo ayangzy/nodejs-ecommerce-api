@@ -12,9 +12,3 @@ exports.successResponse = (res, message, data) => {
     });
 }
 
-
-exports.notFoundResponse = (res, message, data) => {
-    res.status(StatusCodes.OK).send({
-        statusCode: 404, statusText: 'not_found', message, data:null
-    });
-}
