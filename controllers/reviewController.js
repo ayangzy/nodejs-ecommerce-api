@@ -2,6 +2,7 @@ const Review = require('../models/reviewModel');
 const Product = require('../models/productModel');
 const CustomError = require('../errors');
 const { createdResponse, successResponse } = require('../responses/apiResponses');
+const { checkPermissions } = require('../utils/checkPermissions');
 
 exports.createReview = async(req, res) => {
     const {product: productId} = req.body;
@@ -58,10 +59,13 @@ exports.updateReview = async(req, res) => {
     }
     const { title, rating, comment } = req.body;
 
+    checkPermissions(req.user, review.user);
+    
     review.title = title;
     review.rating = rating;
     review.comment = comment;
 
+    
     await review.save();
     successResponse(res, 'Review updated successfully', review);
 }
@@ -74,7 +78,7 @@ exports.updateReview = async(req, res) => {
     if (!review) {
       throw new CustomError.NotFoundError(`No review with id ${reviewId}`);
     }
-  
+    checkPermissions(req.user, review.user);
     await review.remove();
     successResponse(res, 'Review deleted successfully');
   };
@@ -85,5 +89,5 @@ exports.updateReview = async(req, res) => {
         path: 'user',
         select: 'name email'
     });
-    successResponse(res, 'Product reviews retreived successfully', reviews, {count: reviews.length});
+    successResponse(res, 'Product reviews retreived successfully', reviews);
   };

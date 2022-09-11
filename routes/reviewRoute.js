@@ -12,8 +12,8 @@ router
 router
     .route('/:id')
     .get(reviewController.getSingleReview)
-    .patch(reviewController.updateReview)
-    .delete(reviewController.deleteReview)
+    .patch(authenticateUser,reviewController.updateReview)
+    .delete(authenticateUser, reviewController.deleteReview)
 
 router.route('/product/:id/review').get(reviewController.getSingleProductReviews)
 
