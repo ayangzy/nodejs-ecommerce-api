@@ -68,7 +68,7 @@ exports.createOrder = async (req, res) => {
     if (response.data.status === false) {
       throw new CustomError.ServerError(
         'Unable to Create Payment, Service is not available',
-        $response['status'],
+        response['status'],
       )
     }
 
@@ -109,4 +109,27 @@ exports.verifyPayment = async (req, res) => {
     });
     throw new CustomError.BadRequestError('Transaction verification failed')
   }
+
+}
+
+exports.getAllOrder = async(req, res) => {
+  const orders = await Order.find({});
+
+  successResponse(res, 'Orders retreived successfully', orders);
+}
+
+exports.getSingleOrder = async(req, res) => {
+  const orderId = req.params.id;
+  const order = await Order.findOne({_id: orderId});
+  if(!order){
+    CustomError.NotFoundError(`Order with the ID ${orderId} not found`)
+  }
+
+  successResponse(res, 'order retreived successfully', order);
+}
+
+exports.getCurrentUserOrders = async(req, res) => {
+    const orders = await Order.find({user: req.user.userId});
+
+    successResponse(res, 'Orders retrieved successfully', orders)
 }
