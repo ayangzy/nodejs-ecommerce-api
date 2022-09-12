@@ -53,6 +53,7 @@ exports.createOrder = async (req, res) => {
       amount: total * 100,
       email: req.user.email,
       currency: 'NGN',
+      callback_url: process.env.PAYSTACK_VERIFY_PAYMENT_URL
     })
 
     const order = await Order.create({
@@ -73,9 +74,7 @@ exports.createOrder = async (req, res) => {
     }
 
     const link = response.data.authorization_url;
-
     transactionMail(req.user.email, req.user.name);
-
     successResponse(res, 'Order created successfully', { link })
 
   } catch (error) {
@@ -84,10 +83,10 @@ exports.createOrder = async (req, res) => {
 }
 
 exports.verifyPayment = async (req, res) => {
-  const transRef = req.query.ref
+  const transRef = req.query.trxref
 
   if (!transRef) {
-    throw new CustomError.BadRequestError('Please provide a payment referrence')
+    throw new CustomError.BadRequestError('Invalid transaction reference')
   }
 
   const order = await Order.findOne({ trans_ref: transRef });
@@ -102,12 +101,13 @@ exports.verifyPayment = async (req, res) => {
     await Order.findOneAndUpdate({trans_ref: order.trans_ref}, {status: 'successful'}, {
         new: true,
     });
-    successResponse(res, 'Transacton verification successful');
+
+    successResponse(res, 'Transaction successful');
   }else{
     await Order.findOneAndUpdate({trans_ref: order.trans_ref}, {status: response.data.status}, {
         new: true,
     });
-    throw new CustomError.BadRequestError('Transaction verification failed')
+    throw new CustomError.BadRequestError(`Transaction ${response.data.statsu}`)
   }
 
 }
