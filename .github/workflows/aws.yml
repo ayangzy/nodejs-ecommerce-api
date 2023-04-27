@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-east-1
   ECS_CLUSTER: app_cluster
-  CONTAINER_NAME: app
+  CONTAINER_NAME: my-app-td
   ECS_SERVICE: app_service
   ECS_TD: .github/workflows/td.json
 
@@ -33,7 +33,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
-          ECR_REGISTRY: "283805611999.dkr.ecr.us-east-1.amazonaws.com/app_repo"
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: "app_repo"
           IMAGE_TAG: latest
         run: |
@@ -51,7 +51,7 @@ jobs:
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def-1.outputs.task-definition }}
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
